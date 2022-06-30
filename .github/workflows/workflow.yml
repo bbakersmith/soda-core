@@ -51,6 +51,7 @@ jobs:
           - "bigquery"
           - "redshift"
           - "athena"
+          - "db2"
           # - "spark"
           - "spark_df"
     env:

@@ -4,9 +4,9 @@ import logging
 from numbers import Number
 
 import pytest
+from helpers.common_test_tables import customers_profiling
+from helpers.data_source_fixture import DataSourceFixture
 from soda.common.yaml_helper import to_yaml_str
-from tests.helpers.common_test_tables import customers_profiling
-from tests.helpers.data_source_fixture import DataSourceFixture
 
 
 def test_profile_columns_numeric(data_source_fixture: DataSourceFixture):

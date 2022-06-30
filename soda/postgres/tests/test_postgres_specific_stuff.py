@@ -1,5 +1,5 @@
-from tests.helpers.data_source_fixture import DataSourceFixture
-from tests.helpers.test_table import TestTable
+from helpers.data_source_fixture import DataSourceFixture
+from helpers.test_table import TestTable
 
 
 def test_row_count_thresholds_passing(data_source_fixture: DataSourceFixture):
