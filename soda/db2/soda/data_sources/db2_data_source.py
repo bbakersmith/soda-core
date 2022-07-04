@@ -62,3 +62,9 @@ class Db2DataSource(DataSource):
     def literal_datetime(self, datetime: datetime):
         formatted = datetime.strftime("%Y-%m-%d-%H.%M.%S")
         return f"TIMESTAMP '{formatted}'"
+
+    def default_casify_table_name(self, identifier: str) -> str:
+        return identifier.upper()
+
+    def expr_avg(self, expr):
+        return f"AVG(FLOAT({expr}))"
