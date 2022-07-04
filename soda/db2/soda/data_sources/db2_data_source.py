@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class Db2DataSource(DataSource):
-
     SQL_TYPE_FOR_CREATE_TABLE_MAP: dict = {
         DataType.TEXT: "VARCHAR(255)",
         DataType.INTEGER: "INT",
@@ -46,6 +45,57 @@ class Db2DataSource(DataSource):
 
     def sql_information_schema_tables(self) -> str:
         return "SYSCAT.TABLES"
+
+    def sql_information_schema_columns(self) -> str:
+        return "SYSCAT.COLUMNS"
+
+    @staticmethod
+    def column_metadata_columns() -> list:
+        return ["COLNAME", "TYPENAME", "NULLS"]
+
+    def sql_get_table_columns(
+        self,
+        table_name: str,
+        included_columns: list[str] | None = None,
+        excluded_columns: list[str] | None = None,
+    ) -> str:
+        def is_quoted(table_name):
+            return (table_name.startswith('"') and table_name.endswith('"')) or (
+                table_name.startswith("`") and table_name.endswith("`")
+            )
+
+        table_name_lower = table_name.lower()
+        unquoted_table_name_lower = table_name_lower[1:-1] if is_quoted(table_name_lower) else table_name_lower
+
+        filter_clauses = [f"lower(TABNAME) = '{unquoted_table_name_lower}'"]
+
+        if self.schema:
+            filter_clauses.append(f"lower(TABSCHEMA) = '{self.schema.lower()}'")
+
+        if included_columns:
+            include_clauses = []
+            for col in included_columns:
+                include_clauses.append(f"lower(column_name) LIKE lower('{col}')")
+            include_causes_or = " OR ".join(include_clauses)
+            filter_clauses.append(f"({include_causes_or})")
+
+        if excluded_columns:
+            for col in excluded_columns:
+                filter_clauses.append(f"lower(column_name) NOT LIKE lower('{col}')")
+
+        where_filter = " \n  AND ".join(filter_clauses)
+
+        # compose query template
+        # NOTE: we use `order by ordinal_position` to guarantee stable orders of columns
+        # (see https://www.postgresql.org/docs/current/infoschema-columns.html)
+        # this mainly has an advantage in testing but bears very little as to how Soda Cloud
+        # displays those columns as they are ordered alphabetically in the UI.
+        sql = (
+            f"SELECT {', '.join(self.column_metadata_columns())} \n"
+            f"FROM {self.sql_information_schema_columns()} \n"
+            f"WHERE {where_filter}"
+        )
+        return sql
 
     def sql_find_table_names(
         self,
