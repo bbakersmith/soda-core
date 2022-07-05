@@ -97,7 +97,6 @@ jobs:
 
       - name: Test with tox
         run: |
-#          export PYTHONPATH=./soda/core:./soda/athena:./soda/bigquery:./soda/postgres:./soda/redshift:./soda/scientific:./soda/snowflake:./soda/spark:./soda/spark_df:.soda/db2
           tox -- soda -k soda/core
           tox -- soda -k soda/${{ matrix.data-source }}
         env:
@@ -133,7 +132,6 @@ jobs:
 
       - name: Test with tox
         run: |
-#          export PYTHONPATH=./soda/core:./soda/athena:./soda/bigquery:./soda/postgres:./soda/redshift:./soda/scientific:./soda/snowflake:./soda/spark:./soda/spark_df:.soda/db2
           tox -- soda -k soda/core
         env:
           test_data_source: postgres
@@ -169,7 +167,6 @@ jobs:
 
       - name: Test with tox
         run: |
-#          export PYTHONPATH=./soda/core:./soda/athena:./soda/bigquery:./soda/postgres:./soda/redshift:./soda/scientific:./soda/snowflake:./soda/spark:./soda/spark_df:.soda/db2
           tox -- soda -k soda/scientific
   publish-pypi:
     name: Build & Publish Package
