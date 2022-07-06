@@ -23,6 +23,18 @@ class Db2DataSource(DataSource):
         DataType.BOOLEAN: "BOOLEAN",
     }
 
+    SQL_TYPE_FOR_SCHEMA_CHECK_MAP: dict = {
+        DataType.TEXT: "varchar",
+        DataType.INTEGER: "integer",
+        DataType.DECIMAL: "double",
+        DataType.DATE: "date",
+        DataType.TIME: "date",
+        DataType.TIMESTAMP: "timestamp",
+        DataType.TIMESTAMP_TZ: "timestamp",
+        DataType.BOOLEAN: "boolean",
+    }
+
+
     def __init__(self, logs: Logs, data_source_name: str, data_source_properties: dict):
         super().__init__(logs, data_source_name, data_source_properties)
         self.host = data_source_properties.get("host")
